@@ -139,7 +139,7 @@ function Tables() {
                                         <Col className="pr-1" md="6">
                                           <FormGroup>
                                             <label style={{color:"black"}}>الاسم و اللقب</label>
-                                            <Input
+                                            <Input style={{fontSize:"25px",color:"black"}}
                                               onChange={(e) => setFirstName(e.target.value)}
                                               name="FirstName"
                                               placeholder="Prenom"
@@ -156,7 +156,7 @@ function Tables() {
                                         <Col className="pr-1" md="4">
                                           <FormGroup>
                                             <label style={{color:"black"}}>الشهر</label>
-                                            <Input type="select" onChange={(e) => setMonth(e.target.value)}>
+                                            <Input style={{fontSize:"15px",color:"black"}} type="select" onChange={(e) => setMonth(e.target.value)}>
                                               <option>Select Month</option>
                                               <option>الشهر 1</option>
                                               <option>الشهر 2</option>
@@ -181,7 +181,7 @@ function Tables() {
                                         <Col md="12">
                                           <FormGroup>
                                             <label style={{color:"black"}}>عدد الساعات</label>
-                                            <Input
+                                            <Input style={{fontSize:"25px",color:"black"}}
                                               type="number" name="niveau éducation" onChange={(e) => setPrice(e.target.value)}
                                             />
                                           </FormGroup>
@@ -191,7 +191,7 @@ function Tables() {
                                         <Col md="12">
                                           <FormGroup>
                                             <label style={{color:"black"}}>تاريخ الدفع</label>
-                                            <Input
+                                            <Input style={{fontSize:"25px",color:"black"}}
                                               type="date" name="Date de Payment" onChange={(e) => setAge(e.target.value)}
                                             />
                                           </FormGroup>

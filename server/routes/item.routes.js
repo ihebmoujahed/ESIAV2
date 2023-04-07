@@ -4,6 +4,7 @@ const itemController = require("../controllers/item.controller");
 router.post("/AddUser", itemController.AddUser);
 router.post("/Payment", itemController.Payment);
 router.get("/userpay", itemController.userpay);
+router.get("/selectArchive", itemController.selectArchive);
 router.get("/selectuserpay/:id", itemController.selectuserpay);
 router.get("/selectAll", itemController.selectAll);
 router.get("/selectAJE1", itemController.selectAJE1);
@@ -12,11 +13,18 @@ router.get("/selectEPPE", itemController.selectEPPE);
 router.get("/selectEPPEFE1", itemController.selectEPPEFE1);
 router.get("/selectEPPEFE2", itemController.selectEPPEFE2);
 router.get("/selectEPPE2", itemController.selectEPPE2);
+router.get("/selectusermonthTSIG1", itemController.selectusermonthTSIG1);
+router.get("/selectusermonthTSIG2", itemController.selectusermonthTSIG2);
 router.get("/selectTSIG1", itemController.selectTSIG1);
 router.get("/selectTSIG2", itemController.selectTSIG2);
 router.put("/updateAje1", itemController.updateAje1);
 router.put("/updateEPPE", itemController.updateEPPE);
 router.put("/updateTSIG", itemController.updateTSIG);
+router.put("/archive/:id", itemController.archive);
+router.put("/updatePayment/:id", itemController.updatePayment);
+router.put("/updateuser/:id", itemController.updateuser);
+router.put("/cancellarchive/:id", itemController.cancellarchive);
+// router.put("/cancellarchive", itemController.cancellarchive);
 
 router.get("/selectid/:id", itemController.selectid);
 //For teachers

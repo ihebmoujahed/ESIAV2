@@ -83,35 +83,29 @@ function Map() {
                     <h6 style={{ textAlign: "right" }}>إني الممضي &nbsp;أسفله&nbsp; <strong>علــــي &nbsp;المجـــــــاهــد </strong>&nbsp;مدير المدرســـة &nbsp;المذكورة &nbsp;أعــــلاه</h6>
                     <p>&nbsp;</p>
                     <h6 style={{ textAlign: "right" }}> (ة) أشهد أن التلميذ  &nbsp;
-                      <select style={{ border: "1px solid black" }}>
                       
-                            <option >{student.first_name} {student.last_name}</option>
+                            <p style={{position:"relative","right":"92px",top:"-17px"}}>{student.first_name} {student.last_name}</p>
 
                         
-                      </select>
                     </h6>
 
 
 
                     <p>&nbsp;</p>
-                    <h6 style={{ textAlign: "right" }}>المولود (ة) في : 
-                    <select style={{ border: "1px solid black" }}>
+                    <h6 style={{ textAlign: "right" }}>المولود (ة) في :   <p style={{position:"relative","right":"92px",top:"-17px"}}>{student.birthday}</p> 
                         
-                            <option >{student.birthday}</option>
+                         
 
                         
-                      </select>
                     </h6>
                     <p>&nbsp;</p>
                     <div>
                       <h6 style={{ textAlign: "right" }}>مرسم (ة) بالمعهد المذكور و يزاول تكوينه بقســم 
-                      <select style={{ border: "1px solid black" }}>
                        
-                            <option >{student.etude_level}</option>
+                           
 
                           
-                      </select>
-                      </h6>
+                      <p style={{position:"relative","right":"242px",top:"-17px"}}>{student.etude_level}</p> </h6>
                       
 
                     </div>
@@ -134,7 +128,6 @@ function Map() {
                   <h6 style={{ position: "relative", left: "50px" }}>مدنين في{ladate.getFullYear()}/{ladate.getMonth()+1}/{ladate.getDate()}</h6>
                   <h6 style={{ position: "relative", left: "89px" }}>المديـــــــــر</h6>
 
-                  <p>&nbsp;</p>
                   <p>&nbsp;</p>
                   <p>&nbsp;</p>
 

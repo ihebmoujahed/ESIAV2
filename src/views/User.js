@@ -36,9 +36,56 @@ import {
 import { useEffect, useState } from "react";
 
 function UserProfile() {
+  const [Firstname, setFirstname] = useState("");
+  const [Lastname, setLastname] = useState("");
+  const [date, setdate] = useState("");
+
   const [student, setstudent] = useState([]);
   const [studentpay, setstudentpay] = useState([]);
+  const [month, setmonth] = useState("");
+  const [newprice, setnewprice] = useState("");
+  const [newnumero_price, setnewnumero_price] = useState("");
+  const updateuser = (id_User) => {
+    var obj = {}
+    if (Lastname === "") {
+      var obj = {
+        first_name: Firstname,
+        last_name: student.last_name,
+        birthday: student.birthday
+      }
 
+    } else if (Firstname === "") {
+      var obj = {
+        first_name: student.first_name,
+        last_name: Lastname,
+        birthday: student.birthday
+
+      }
+
+    }
+    else if (date === "") {
+      var obj = {
+        first_name: student.first_name,
+        birthday: date,
+        last_name: student.last_name,
+
+      }
+
+    }
+    else {
+      var obj = {
+        first_name: Firstname,
+        last_name: Lastname,
+        birthday: date
+
+      }
+    }
+
+    console.log(obj)
+    axios.put(`http://localhost:3001/api/items/updateuser/${student.id_User}`, obj).then((response) => {
+      console.log(response)
+    })
+  }
 
   const get = () => {
     const items = JSON.parse(localStorage.getItem("std"))
@@ -48,16 +95,15 @@ function UserProfile() {
       setstudent(s)
     }
   }
-
-
   useEffect(() => {
     axios.get(`http://localhost:3001/api/items/selectuserpay/${student.id_User}`).then((response) => {
       // console.log(response.data)
       setstudentpay(response.data)
-      console.log(studentpay)
+      // console.log(studentpay)
     })
     get()
-  })
+  }, [`http://localhost:3001/api/items/selectuserpay/${student.id_User}`])
+
 
   return (
     <>
@@ -78,30 +124,97 @@ function UserProfile() {
                     />
                     <h5 className="title"></h5>
                   </a>
-                  <h4 >{student.first_name + student.last_name}</h4>
+                  <h4 >{student.first_name + " " + student.last_name}</h4>
                 </div>
-               
+
               </CardBody>
-             
+
             </Card>
             <Card>
               <Table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
                 <thead className="text-primary">
                   <tr>
-                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>First Name</th>
-                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>Price</th>
-                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>Date de Payment</th>
-                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>month</th>
+                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px', fontSize: "20px" }}>تعديل</th>
+                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px', fontSize: "20px" }}>رقم الوصل</th>
+                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px', fontSize: "20px" }}>الشهر</th>
+                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px', fontSize: "20px" }}>تاريخ الدفع</th>
+                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px', fontSize: "20px" }}>المبلغ</th>
+                    <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px', fontSize: "20px" }}>الاسم و اللقب</th>
                   </tr>
                 </thead>
                 {studentpay.map((elem) => {
                   return (
                     <tbody>
                       <tr>
-                        <td style={{ border: '1px solid black', padding: '5px' }}><a>{elem.first_name}</a></td>
-                        <td style={{ border: '1px solid black', padding: '5px' }}>{elem.price}</td>
-                        <td style={{ border: '1px solid black', padding: '5px' }}>{elem.dbt}</td>
-                        <td style={{ border: '1px solid black', padding: '5px' }}>{elem.month}</td>
+                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "18px" }}><a  onClick={(id_Payment) => {
+                          var dd = {}
+
+                          if (month === "") {
+                            var dd = {
+                              month: elem.month,
+                              price: newprice,
+                              numero_payment: elem.numero_payment
+                            }
+
+                          } else if (newprice === "") {
+                            var dd = {
+                              month: month,
+                              price: elem.price,
+                              numero_payment: elem.numero_payment
+                              }
+
+                          }
+                          else if (newnumero_price === "") {
+                            var dd = {
+                              month: elem.month,
+                              price: elem.price,
+                              numero_payment: newnumero_price
+
+                            }
+
+                          }
+                          else {
+                            var dd = {
+                              first_name: Firstname,
+                              last_name: Lastname,
+                              birthday: date
+
+                            }
+                          }
+                          console.log(dd);
+
+                          axios.put(`http://localhost:3001/api/items/updatePayment/${elem.id_Payment}`,dd).then((response) => {
+                            console.log(response)
+                          })
+
+                        }}>تعديل</a></td>
+                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "18px" }}>
+                          <input type="numero" defaultValue={elem.numero_payment} onChange={(e) => setnewnumero_price(e.target.value)} style={{ width: "75px" }} />
+                        </td>
+                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "18px" }}>
+                          <select onChange={(e) => setmonth(e.target.value)}>
+                            <option selected disabled hidden>{elem.month}</option>
+                            <option>الشهر 1</option>
+                            <option>الشهر 2</option>
+                            <option>الشهر 3</option>
+                            <option>الشهر 4</option>
+                            <option>الشهر 5</option>
+                            <option>الشهر 6</option>
+                            <option>الشهر 7</option>
+                            <option>الشهر 8</option>
+                            <option>الشهر 9</option>
+                            <option>الشهر 10</option>
+                            <option>الشهر 11</option>
+                            <option>الشهر 12</option>
+                            <option>الترسيم</option>
+                            <option>معلوم الامتحان</option>
+                          </select>
+
+                        </td>
+                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "18px" }}>{elem.dbt}</td>
+                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "18px" }}>
+                          <input type="number" defaultValue={elem.price} style={{ width: "95px" }} onChange={(e) => setnewprice(e.target.value)} /></td>
+                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "18px" }}><a>{elem.first_name} {elem.last_name}</a></td>
 
                       </tr>
                     </tbody>
@@ -117,32 +230,12 @@ function UserProfile() {
               </CardHeader>
               <CardBody>
                 <Form>
-                  <Row>
 
-                    <Col className="px-1" md="3">
-                      <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue={student.first_name}
-                          placeholder="Username"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input placeholder="Email" type="email" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
                   <Row>
                     <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>First Name</label>
-                        <Input
+                        <label style={{ fontSize: "23px", color: "black" }}>الاسم</label>
+                        <Input onChange={(e) => setFirstname(e.target.value)}
                           defaultValue={student.first_name}
                           placeholder="Company"
                           type="text"
@@ -151,11 +244,11 @@ function UserProfile() {
                     </Col>
                     <Col className="pl-1" md="6">
                       <FormGroup>
-                        <label>Last Name</label>
-                        <Input
+                        <label style={{ fontSize: "23px", color: "black" }}>اللقب</label>
+                        <Input onChange={(e) => setLastname(e.target.value)}
                           defaultValue={student.last_name}
-                          placeholder="Last Name"
                           type="text"
+
                         />
                       </FormGroup>
                     </Col>
@@ -163,11 +256,12 @@ function UserProfile() {
                   <Row>
                     <Col md="12">
                       <FormGroup>
-                        <label>birthday</label>
+                        <label style={{ fontSize: "23px", color: "black" }}>تاريخ الولادة</label>
                         <Input
                           defaultValue={student.birthday}
                           placeholder="Home Address"
-                          type="text"
+                          type="date"
+                          onChange={(e) => setdate(e.target.value)}
                         />
                       </FormGroup>
                     </Col>
@@ -175,7 +269,7 @@ function UserProfile() {
                   <Row>
                     <Col className="pr-1" md="4">
                       <FormGroup>
-                        <label>City</label>
+                        <label style={{ fontSize: "23px", color: "black" }}>مكان الولادة</label>
                         <Input
                           defaultValue="Tunis"
                           placeholder="City"
@@ -185,17 +279,18 @@ function UserProfile() {
                     </Col>
                     <Col className="px-1" md="4">
                       <FormGroup>
-                        <label>Country</label>
+                        <label style={{ fontSize: "23px", color: "black" }}>البلاد</label>
                         <Input
                           defaultValue={student.place}
                           placeholder="Country"
                           type="text"
+                          style={{ fontFamily: "gras" }}
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-1" md="4">
                       <FormGroup>
-                        <label>Card id</label>
+                        <label style={{ fontSize: "23px", color: "black" }}>بطاقة تعريف الوطنية</label>
                         <Input placeholder="ZIP Code" type="number" defaultValue={student.card_id} />
                       </FormGroup>
                     </Col>
@@ -206,7 +301,7 @@ function UserProfile() {
                       <Button
                         className="btn-round"
                         color="primary"
-                        type="submit"
+                        onClick={updateuser}
                       >
                         Update Profile
                       </Button>

@@ -36,6 +36,7 @@ import NewTech from "views/NewTech";
 import TablesTeach from "views/TablesTeach";
 import EPPEFE1 from "views/EPPE1FE"
 import EPPEFE2 from "views/EPPE2FE"
+import archive from "views/Archive"
 var routes = [
   {
     path: "/dashboard",
@@ -56,6 +57,13 @@ var routes = [
     name: "شهادة الحضور",
     icon: "nc-icon nc-tile-56",
     component: Maps,
+    layout: "/admin"
+  },
+  {
+    path: "/archive",
+    name: "ارشيف",
+    icon: "nc-icon nc-tile-56",
+    component: archive,
     layout: "/admin"
   },
  

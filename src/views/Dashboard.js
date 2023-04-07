@@ -41,18 +41,40 @@ import axios from "axios"
 function Dashboard(props) {
   const [users, setUsers] = useState([])
   const [teachers, setteachers] = useState([])
+  const [totalpay, settotalpay] = useState([])
+  const [Total, setTotal] = useState(0)
+
+
+  const result = () => {
+    var res = 0
+    totalpay.map((item) => {
+      var b = res += item.price
+      // console.log(b)
+      setTotal(b)
+    }
+    )
+    return res
+  }
 
   useEffect(() => {
     axios.get("http://localhost:3001/api/items/selectAll").then((response) => {
       setUsers(response.data)
 
     }, ["http://localhost:3001/api/items/selectAll"])
-
+    axios.get("http://localhost:3001/api/items/userpay").then((response) => {
+      var s = response.data
+      settotalpay(s)
+    }, ["http://localhost:3001/api/items/userpay"])
     axios.get("http://localhost:3001/api/items/selectAllTeacher").then((response) => {
       setteachers(response.data)
 
     }, ["http://localhost:3001/api/items/selectAllTeacher"])
-  })
+
+    result()
+  },[])
+
+
+
   return (
     <>
       <div className="content">
@@ -120,8 +142,8 @@ function Dashboard(props) {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <CardTitle tag="p">23</CardTitle>
+                      <p className="card-category">مجموع مداخيل من التلاميذ</p>
+                      <CardTitle tag="p">{Total}</CardTitle>
                       <p />
                     </div>
                   </Col>

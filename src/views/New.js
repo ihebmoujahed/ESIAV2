@@ -138,7 +138,7 @@ const New = ({ inputs, title }) => {
                 <Col className="px-1" md="4">
                   <FormGroup>
                     <label style={{fontSize:"24px",color:"black"}}>القسم</label>
-                    <Input style={{border: "2px solid black"}} type="select" onChange={(e) => setEtude(e.target.value)}>
+                    <Input style={{border: "2px solid black"}} type="select" onChange={(e) => (setEtude(e.target.value))}>
                       <option style={{fontSize:"24px",color:"black"}}>Select ClassName</option>
                       <option style={{fontSize:"24px",color:"black"}}>تقني مساندة في اعلامبة التصرف 1</option>
                       <option style={{fontSize:"24px",color:"black"}}>تقني مساندة في اعلامبة التصرف  2</option>

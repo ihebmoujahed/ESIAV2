@@ -18,6 +18,7 @@
 */
 import React from "react";
 import ReactHtmlTableToExcel from 'react-html-table-to-excel';
+import { useDownloadExcel } from 'react-export-table-to-excel';
 
 // reactstrap components
 import {
@@ -35,9 +36,13 @@ import {
   Row,
   Col
 } from "reactstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios"
 function Tables() {
+
+
+
+
   const [FirstName, setFirstName] = useState("");
   const [date, setdate] = useState([]);
   const [Card_ID, setCard_ID] = useState("");
@@ -49,8 +54,10 @@ function Tables() {
   const [userpay, setuserpay] = useState([])
 
   const [studentpay, setstudentpay] = useState([]);
+  const [studenpaymonthTSIG1, setstudenpaymonthTSIG1] = useState([]);
 
   const [users, setUsers] = useState([])
+  const tableRef = useRef(null);
 
   const addpay = () => {
     axios.post("http://localhost:3001/api/items/Payment", {
@@ -62,25 +69,31 @@ function Tables() {
       month: Month
 
     }).then((response) => {
-      console.log(response);
+      alert("Doneee")
     }).catch((err) => {
       console.log(err);
     })
 
   }
-  const pass=()=>{
-    axios.put("http://localhost:3001/api/items/updateTSIG").then((response)=>{
+  const pass = () => {
+    axios.put("http://localhost:3001/api/items/updateTSIG").then((response) => {
       console.log(response);
     })
   }
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: 'Users table',
+    sheet: 'Users'
+  })
 
   useEffect(() => {
     axios.get(`http://localhost:3001/api/items/selectuserpay/${student.id_User}`).then((response) => {
       // console.log(response.data)
       setstudentpay(response.data)
-      console.log(studentpay)
     })
-
+    axios.get("http://localhost:3001/api/items/selectusermonthTSIG1").then((response) => {
+      setstudenpaymonthTSIG1(response.data)
+  })
     axios.get("http://localhost:3001/api/items/selectTSIG1").then((response) => {
       setUsers(response.data)
 
@@ -103,8 +116,8 @@ function Tables() {
                 <CardTitle tag="h4">Student  Table</CardTitle>
               </CardHeader>
               <CardBody>
-                <Table id="my_tt"  style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
-                <h3 style={{ border: '1px solid black', padding: '5px', fontSize: "23px",width:"168%",backgroundColor: "yellow" }}>قائمة اسمية لافواج المرسمين في التكوين الخاص</h3>
+                <table ref={tableRef} style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
+                  <h3 style={{ border: '1px solid black', padding: '5px', fontSize: "23px", width: "168%", backgroundColor: "yellow" }}>قائمة اسمية لافواج المرسمين في التكوين الخاص</h3>
                   <tbody>
                     <tr>
                       <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>الجنوب للاعلامية و الادارة</td>
@@ -139,7 +152,7 @@ function Tables() {
                     <tr>
                       <td style={{ padding: '5px', fontSize: "23px" }} >30/07/2024</td>
 
-                      <td style={{border: '1px solid black', padding: '5px', fontSize: "23px", backgroundColor: "yellow" }} ><span style={{ color: "blue" }}>ختم التكوين</span></td>
+                      <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px", backgroundColor: "yellow" }} ><span style={{ color: "blue" }}>ختم التكوين</span></td>
                     </tr>
 
                     <tr>
@@ -148,10 +161,10 @@ function Tables() {
                     </tr>
                   </tbody>
 
-                </Table>
+                </table>
               </CardBody>
               <CardBody>
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                   نجاح
                 </button>
 
@@ -165,7 +178,7 @@ function Tables() {
                         </button>
                       </div>
                       <div class="modal-body">
-                    هل انت متاكد من نجاح التلاميذ
+                        هل انت متاكد من نجاح التلاميذ
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
@@ -174,9 +187,10 @@ function Tables() {
                     </div>
                   </div>
                 </div>
-                <Table  style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
+                <Table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
                   <thead className="text-primary">
                     <tr>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">ارشيف</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">الخلاص</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">شهادةحضور</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">المستوى الدراسي او التكويني</th>
@@ -191,6 +205,16 @@ function Tables() {
                     return (
                       <tbody>
                         <tr>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>
+                            <a style={{ color: "red", fontFamily: "gras" }} href="" type="button"  onClick={(id_User) =>
+                              axios.put(`http://localhost:3001/api/items/archive/${elem.id_User}`).then((response) => {
+                                console.log(response.data)
+                              })
+                            }>
+                              ارشيف
+                            </a>
+                          </td>
+
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>
                             <a style={{ color: "red", fontFamily: "gras" }} href="" type="button" data-toggle="modal" data-target="#exampleModalLong" onClick={(id_User) =>
                               axios.get(`http://localhost:3001/api/items/selectid/${elem.id_User}`).then((response) => {
@@ -217,8 +241,8 @@ function Tables() {
                                       <Row>
                                         <Col className="pr-1" md="6">
                                           <FormGroup>
-                                            <label style={{color:"black"}}>الاسم و اللقب</label>
-                                            <Input
+                                            <label style={{ color: "black" }}>الاسم و اللقب</label>
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               onChange={(e) => setFirstName(e.target.value)}
                                               name="FirstName"
                                               placeholder="Prenom"
@@ -234,8 +258,8 @@ function Tables() {
 
                                         <Col className="pr-1" md="4">
                                           <FormGroup>
-                                            <label style={{color:"black"}}>القسم</label>
-                                            <Input type="select" onChange={(e) => setMonth(e.target.value)}>
+                                            <label style={{ color: "black" }}>القسم</label>
+                                            <Input style={{ fontSize: "15px", color: "black" }} type="select" onChange={(e) => setMonth(e.target.value)}>
                                               <option>Select Month</option>
                                               <option>الشهر 1</option>
                                               <option>الشهر 2</option>
@@ -260,8 +284,8 @@ function Tables() {
                                       <Row>
                                         <Col md="12">
                                           <FormGroup>
-                                            <label style={{color:"black"}}>الثمن</label>
-                                            <Input
+                                            <label style={{ color: "black" }}>الثمن</label>
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               type="number" name="niveau éducation" onChange={(e) => setPrice(e.target.value)}
                                             />
                                           </FormGroup>
@@ -270,8 +294,8 @@ function Tables() {
                                       <Row>
                                         <Col md="12">
                                           <FormGroup>
-                                            <label style={{color:"black"}}>رقم الدفع</label>
-                                            <Input
+                                            <label style={{ color: "black" }}>رقم التوصيل</label>
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               type="number" name="niveau éducation" onChange={(e) => setnumero_payment(e.target.value)}
                                             />
                                           </FormGroup>
@@ -280,8 +304,8 @@ function Tables() {
                                       <Row>
                                         <Col md="12">
                                           <FormGroup>
-                                            <label style={{color:"black"}}>تاريخ الدفع</label>
-                                            <Input
+                                            <label style={{ color: "black" }}>تاريخ الدفع</label>
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               type="date" name="Date de Payment" onChange={(e) => setdate(e.target.value)}
                                             />
                                           </FormGroup>
@@ -319,23 +343,25 @@ function Tables() {
                                   <div class="modal-body">
                                     <div>
                                       <Card>
-                                        <Table  style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
+                                        <Table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
                                           <thead className="text-primary">
                                             <tr>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>First Name</th>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>Price</th>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>Date de Payment</th>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>month</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>رقم الوصل</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>الشهر</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>المبلغ</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>تاريخ الدفع</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>الاسم و اللقب</th>
                                             </tr>
                                           </thead>
                                           {studentpay.map((elem) => {
                                             return (
                                               <tbody>
                                                 <tr>
-                                                  <td style={{ border: '1px solid black', padding: '5px' }}><a>{elem.first_name}</a></td>
+                                                  <td style={{ border: '1px solid black', padding: '5px' }}>{elem.numero_payment}</td>
+                                                  <td style={{ border: '1px solid black', padding: '5px' }}>{elem.month}</td>
                                                   <td style={{ border: '1px solid black', padding: '5px' }}>{elem.price}</td>
                                                   <td style={{ border: '1px solid black', padding: '5px' }}>{elem.dbt}</td>
-                                                  <td style={{ border: '1px solid black', padding: '5px' }}>{elem.month}</td>
+                                                  <td style={{ border: '1px solid black', padding: '5px' }}><a>{elem.first_name + " " + elem.last_name}</a></td>
 
                                                 </tr>
                                               </tbody>
@@ -355,7 +381,7 @@ function Tables() {
 
                           </td>
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>
-                            <a style={{ color: "red", fontFamily: "gras" }} href="http://localhost:3000/admin/maps" type="button"  onClick={(id_User) =>
+                            <a style={{ color: "red", fontFamily: "gras" }} href="http://localhost:3000/admin/maps" type="button" onClick={(id_User) =>
                               axios.get(`http://localhost:3001/api/items/selectid/${elem.id_User}`).then((response) => {
                                 console.log(response.data)
                                 var haya = response.data
@@ -366,7 +392,7 @@ function Tables() {
                               شهادة حضور
                             </a>
 
-                            
+
 
                           </td>
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.leveleducation}</td>
@@ -391,22 +417,22 @@ function Tables() {
                     )
                   })}
                 </Table>
-                <Table id="my-table" style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%',display:"none" }}>
-                      <thead className="text-primary">
-                        <tr>
+                <table ref={tableRef} style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%', display: "none" }}>
+                  <thead className="text-primary">
+                    <tr>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">المستوى الدراسي او التكويني</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>رقم بطاقة التعريف الوطنية</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>تاريخ الولادة</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الجنس</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الاسم و اللقب</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>ع/ر</th>
-                        </tr>
-                      </thead>
-                {users.map((elem) => {
-                  return (
+                    </tr>
+                  </thead>
+                  {users.map((elem) => {
+                    return (
                       <tbody>
                         <tr>
-                        <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.leveleducation}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.leveleducation}</td>
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>{elem.card_id}</td>
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>{elem.birthday}</td>
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.gender}</td>
@@ -416,22 +442,59 @@ function Tables() {
 
                         </tr>
                       </tbody>
-                      )
-                    })}
-                    </Table>
+                    )
+                  })}
+                </table>
+
+
+
+
+
+
+                <table  style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%'}}>
+                  <thead className="text-primary">
+                    <tr>
+
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الشهر 7</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الشهر 6</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>5 الشهر</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>4 الشهر</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الشهر 3</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الشهر 2</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الشهر 1</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}> الترسيم</th>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }}>الاسم و اللقب</th>
+                    </tr>
+                  </thead>
+                  {studenpaymonthTSIG1.map((elem) => {
+                    return (
+                      <tbody>
+                        <tr>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.payment_user.split(",")[7]}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.payment_user.split(",")[6]}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.payment_user.split(",")[5]}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.payment_user.split(",")[4]}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.payment_user.split(",")[3]}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>{elem.payment_user.split(",")[2]}</td>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>{elem.payment_user.split(",")[1]}</td>
+                          <th style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }} className="text-right">{elem.payment_user.split(",")[0]}</th>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}
+                          >{elem.first_name} {elem.last_name}</td>
+
+                        </tr>
+                      </tbody>
+                    )
+                  })}
+                </table>
               </CardBody>
             </Card>
           </Col>
           <Col md="12">
             <Card className="card-plain">
 
-              <ReactHtmlTableToExcel
 
-                table={['my-table']}
-                filename="tables"
-                sheet="sheet 1"
-                buttonText="Export"
-              />
+              <button onClick={onDownload}> Export excel </button>
+
 
             </Card>
           </Col>

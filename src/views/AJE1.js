@@ -18,7 +18,8 @@
 */
 import React from "react";
 import ReactHtmlTableToExcel from 'react-html-table-to-excel';
-
+import { useDownloadExcel } from 'react-export-table-to-excel';
+import $ from "jquery"
 // reactstrap components
 import {
   Button,
@@ -35,9 +36,10 @@ import {
   Row,
   Col
 } from "reactstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import axios from "axios"
 function Tables() {
+  const tableRef = useRef(null);
   const [FirstName, setFirstName] = useState("");
   const [date, setdate] = useState([]);
   const [Card_ID, setCard_ID] = useState("");
@@ -51,7 +53,11 @@ function Tables() {
   const [studentpay, setstudentpay] = useState([]);
 
   const [users, setUsers] = useState([])
-
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: 'Users table',
+    sheet: 'Users'
+  })
   const addpay = () => {
     axios.post("http://localhost:3001/api/items/Payment", {
       student: student.first_name,
@@ -63,10 +69,12 @@ function Tables() {
 
     }).then((response) => {
       // console.log(response);
+     alert(response)
+
     }).catch((err) => {
       console.log(err);
     })
-
+alert("donee!!!")
   }
 
   const pass = () => {
@@ -103,7 +111,7 @@ function Tables() {
                 <CardTitle tag="h4">Student  Table</CardTitle>
               </CardHeader>
               <CardBody>
-                <Table id="my_tt" style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
+                <table ref={tableRef} style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
                   <h3 style={{ border: '1px solid black', padding: '5px', fontSize: "23px", width: "168%", backgroundColor: "yellow" }}>قائمة اسمية لافواج المرسمين في التكوين الخاص</h3>
                   <tbody>
                     <tr>
@@ -148,7 +156,7 @@ function Tables() {
                     </tr>
                   </tbody>
 
-                </Table>
+                </table>
               </CardBody>
               <CardBody>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
@@ -165,10 +173,10 @@ function Tables() {
                         </button>
                       </div>
                       <div class="modal-body">
-                    هل انت متاكد من نجاح التلاميذ
+                        هل انت متاكد من نجاح التلاميذ
                       </div>
                       <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
                         <button type="button" class="btn btn-primary" onClick={pass}>نجاح</button>
                       </div>
                     </div>
@@ -177,6 +185,7 @@ function Tables() {
                 <Table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
                   <thead className="text-primary">
                     <tr>
+                      <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">ارشيف</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">الخلاص</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">شهادةحضور</th>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">المستوى الدراسي او التكويني</th>
@@ -191,6 +200,16 @@ function Tables() {
                     return (
                       <tbody>
                         <tr>
+                          <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>
+                            <a style={{ color: "red", fontFamily: "gras" }} href="" type="button"  onClick={(id_User) =>
+                              axios.put(`http://localhost:3001/api/items/archive/${elem.id_User}`).then((response) => {
+                                console.log(response.data)
+                              })
+                            }>
+                              ارشيف
+                            </a>
+                          </td>
+
                           <td style={{ border: '1px solid black', padding: '5px', fontSize: "23px" }}>
                             <a style={{ color: "red", fontFamily: "gras" }} href="" type="button" data-toggle="modal" data-target="#exampleModalLong" onClick={(id_User) =>
                               axios.get(`http://localhost:3001/api/items/selectid/${elem.id_User}`).then((response) => {
@@ -218,7 +237,7 @@ function Tables() {
                                         <Col className="pr-1" md="6">
                                           <FormGroup>
                                             <label style={{ color: "black" }}>الاسم و اللقب</label>
-                                            <Input
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               onChange={(e) => setFirstName(e.target.value)}
                                               name="FirstName"
                                               placeholder="Prenom"
@@ -235,7 +254,7 @@ function Tables() {
                                         <Col className="pr-1" md="4">
                                           <FormGroup>
                                             <label style={{ color: "black" }}>القسم</label>
-                                            <Input type="select" onChange={(e) => setMonth(e.target.value)}>
+                                            <Input style={{ fontSize: "15px", color: "black" }} type="select" onChange={(e) => setMonth(e.target.value)}>
                                               <option>Select Month</option>
                                               <option>الشهر 1</option>
                                               <option>الشهر 2</option>
@@ -261,7 +280,7 @@ function Tables() {
                                         <Col md="12">
                                           <FormGroup>
                                             <label style={{ color: "black" }}>الثمن</label>
-                                            <Input
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               type="number" name="niveau éducation" onChange={(e) => setPrice(e.target.value)}
                                             />
                                           </FormGroup>
@@ -270,8 +289,8 @@ function Tables() {
                                       <Row>
                                         <Col md="12">
                                           <FormGroup>
-                                            <label style={{ color: "black" }}>رقم الدفع</label>
-                                            <Input
+                                            <label style={{ color: "black" }}>رقم التوصيل</label>
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               type="number" name="niveau éducation" onChange={(e) => setnumero_payment(e.target.value)}
                                             />
                                           </FormGroup>
@@ -281,7 +300,7 @@ function Tables() {
                                         <Col md="12">
                                           <FormGroup>
                                             <label style={{ color: "black" }}>تاريخ الدفع</label>
-                                            <Input
+                                            <Input style={{ fontSize: "27px", color: "black" }}
                                               type="date" name="Date de Payment" onChange={(e) => setdate(e.target.value)}
                                             />
                                           </FormGroup>
@@ -292,7 +311,7 @@ function Tables() {
                                       </Row>
                                       <Row>
                                         <div className="update ml-auto mr-auto">
-                                          <Button
+                                          <Button 
                                             className="btn-round"
                                             color="primary"
                                             onClick={addpay}
@@ -322,20 +341,22 @@ function Tables() {
                                         <Table style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%' }}>
                                           <thead className="text-primary">
                                             <tr>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>First Name</th>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>Price</th>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>Date de Payment</th>
-                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', padding: '5px' }}>month</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>رقم الوصل</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>الشهر</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>المبلغ</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>تاريخ الدفع</th>
+                                              <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'center', padding: '5px', border: '1px solid black', }}>الاسم و اللقب</th>
                                             </tr>
                                           </thead>
                                           {studentpay.map((elem) => {
                                             return (
                                               <tbody>
                                                 <tr>
-                                                  <td style={{ border: '1px solid black', padding: '5px' }}><a>{elem.first_name}</a></td>
+                                                  <td style={{ border: '1px solid black', padding: '5px' }}>{elem.numero_payment}</td>
+                                                  <td style={{ border: '1px solid black', padding: '5px' }}>{elem.month}</td>
                                                   <td style={{ border: '1px solid black', padding: '5px' }}>{elem.price}</td>
                                                   <td style={{ border: '1px solid black', padding: '5px' }}>{elem.dbt}</td>
-                                                  <td style={{ border: '1px solid black', padding: '5px' }}>{elem.month}</td>
+                                                  <td style={{ border: '1px solid black', padding: '5px' }}><a>{elem.first_name + " " + elem.last_name}</a></td>
 
                                                 </tr>
                                               </tbody>
@@ -380,6 +401,7 @@ function Tables() {
                               var haya = response.data
                               // console.log(usersinfo)
                               localStorage.setItem("std", JSON.stringify(haya))
+                              localStorage.setItem("studentpay", JSON.stringify(studentpay))
                             })
                           }
                           >{elem.first_name} {elem.last_name}</a></td>
@@ -391,7 +413,7 @@ function Tables() {
                     )
                   })}
                 </Table>
-                <Table id="my-table" style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%', display: "none" }}>
+                <table ref={tableRef} style={{ border: '1px solid black', borderCollapse: 'collapse', width: '100%', display: "none" }}>
                   <thead className="text-primary">
                     <tr>
                       <th style={{ backgroundColor: 'gray', color: 'white', textAlign: 'left', border: '1px solid black', padding: '5px' }} className="text-right">المستوى الدراسي او التكويني</th>
@@ -418,20 +440,16 @@ function Tables() {
                       </tbody>
                     )
                   })}
-                </Table>
+                </table>
               </CardBody>
             </Card>
           </Col>
           <Col md="12">
             <Card className="card-plain">
 
-              <ReactHtmlTableToExcel
 
-                table={['my-table']}
-                filename="tables"
-                sheet="sheet 1"
-                buttonText="Export"
-              />
+              <button onClick={onDownload}> Export excel </button>
+
 
             </Card>
           </Col>
